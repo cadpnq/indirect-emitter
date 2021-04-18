@@ -1,0 +1,25 @@
+{
+  "name": "indirect-emitter",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "coverage": "nyc npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cadpnq/indirect-emitter.git"
+  },
+  "author": "Nicky Nickell <nicky.nickell@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cadpnq/indirect-emitter/issues"
+  },
+  "homepage": "https://github.com/cadpnq/indirect-emitter#readme",
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0"
+  }
+}
