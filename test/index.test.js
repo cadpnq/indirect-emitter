@@ -1,7 +1,6 @@
 const EventEmitter = require('events');
 const IndirectEmitter = require('../index.js');
 
-
 function setup(context) {
   context.indirect = new IndirectEmitter();
   context.emitterA = new EventEmitter();
@@ -87,12 +86,24 @@ describe('IndirectEmitter', function() {
   });
 
   describe('#on()', function() {
+    it('should register a listener', function() {
+      const listener = () => 0;
+      this.indirect.on('test', listener);
+      assert.deepEqual(this.indirect.listeners('test'), [listener], 'listener was not added');
+    });
+
     it('should return the IndirectEmitter', function() {
       assert.equal(this.indirect.on('test', () => 0), this.indirect, 'function did not return reference to instance')
     });
   });
 
   describe('#once()', function() {
+    it('should register a listener', function() {
+      const listener = () => 0;
+      this.indirect.on('test', listener);
+      assert.deepEqual(this.indirect.listeners('test'), [listener], 'listener was not added');
+    });
+
     it('should return the IndirectEmitter', function() {
       assert.equal(this.indirect.once('test', () => 0), this.indirect, 'function did not return reference to instance')
     });
@@ -113,12 +124,38 @@ describe('IndirectEmitter', function() {
   });
 
   describe('#prependListener()', function() {
+    it('should prepend a listener', function() {
+      const listenerA = () => 0;
+      const listenerB = () => 0;
+
+      assert.deepEqual(this.indirect.listeners('test'), [], 'list of listeners did not match');
+
+      this.indirect.on('test', listenerA);
+      assert.deepEqual(this.indirect.listeners('test'), [listenerA], 'list of listeners did not match');
+
+      this.indirect.prependListener('test', listenerB);
+      assert.deepEqual(this.indirect.listeners('test'), [listenerB, listenerA], 'list of listeners did not match');
+    });
+
     it('should return the IndirectEmitter', function() {
       assert.equal(this.indirect.prependListener('test', () => 0), this.indirect, 'function did not return reference to instance')
     });
   });
 
   describe('#prependOnceListener()', function() {
+    it('should prepend a listener', function() {
+      const listenerA = () => 0;
+      const listenerB = () => 0;
+
+      assert.deepEqual(this.indirect.listeners('test'), [], 'list of listeners did not match');
+
+      this.indirect.once('test', listenerA);
+      assert.deepEqual(this.indirect.listeners('test'), [listenerA], 'list of listeners did not match');
+
+      this.indirect.prependOnceListener('test', listenerB);
+      assert.deepEqual(this.indirect.listeners('test'), [listenerB, listenerA], 'list of listeners did not match');
+    });
+
     it('should return the IndirectEmitter', function() {
       assert.equal(this.indirect.prependOnceListener('test', () => 0), this.indirect, 'function did not return reference to instance')
     });
