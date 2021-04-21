@@ -81,8 +81,8 @@ class IndirectEmitter extends ProxyExtender {
 
   _removeListener(eventName, listener) {
     this.#listeners = this.#listeners.filter((info) => {
-      return info.eventName == eventName &&
-             info.listener == listener;
+      return !(info.eventName == eventName &&
+               info.listener == listener);
     });
   }
 
