@@ -56,6 +56,30 @@ describe('IndirectEmitter', function() {
   });
 
   describe('#emit()', function() {
+    beforeEach(function() {
+      setup(this);
+    });
+
+    it('should return false if no listener is available when an emitter is attached', function() {
+      this.indirect.setEmitter(this.emitterA);
+      assert.isFalse(this.indirect.emit('test', 'did not return false'));
+    });
+
+    it('should return true if a listener is available when an emitter is attached', function() {
+      this.indirect.setEmitter(this.emitterA);
+      this.indirect.on('test', () => 0);
+      assert.isTrue(this.indirect.emit('test', 'did not return true'));
+    });
+
+    it('should return false if no listener is available when no emitter is attached', function() {
+      assert.isFalse(this.indirect.emit('test'), 'did not return false');
+    });
+
+    it('should return true if a listener is available when no emitter is attached', function() {
+      this.indirect.on('test', () => 0);
+      this.indirect.on('test2', () => 0);
+      assert.isTrue(this.indirect.emit('test'), 'did not return true');
+    });
   });
 
   describe('#eventNames()', function() {
@@ -222,12 +246,29 @@ describe('IndirectEmitter', function() {
   });
 
   describe('#removeListener()', function() {
+    beforeEach(function() {
+      setup(this);
+    });
+
     it('should remove a listener', function() {
       const listener = () => 0;
       this.indirect.on('test', listener);
       assert.deepEqual(this.indirect.listeners('test'), [listener], 'listener was not added');
+
       this.indirect.removeListener('test', listener);
       assert.deepEqual(this.indirect.listeners('test'), [], 'listener was not removed');
+    });
+
+    it('should remove a listener from an attached emitter', function() {
+      const listenerA = () => 0;
+      const listenerB = () => 0;
+      this.indirect.on('test', listenerA);
+      this.indirect.on('test2', listenerB);
+      this.indirect.setEmitter(this.emitterA);
+      assert.equal(this.emitterA.listeners('test').length, 1, 'listener was not added');
+
+      this.indirect.removeListener('test', listenerA);
+      assert.deepEqual(this.emitterA.listeners('test').length, 0, 'listener was not removed');
     });
 
     it('should return the IndirectEmitter', function() {
@@ -236,6 +277,36 @@ describe('IndirectEmitter', function() {
   });
 
   describe('#setEmitter()', function() {
+    beforeEach(function() {
+      setup(this);
+    });
+
+    it('should set the max listeners value on the emitter when it is attached', function() {
+      this.indirect.setMaxListeners(100);
+
+      assert.equal(this.emitterA.getMaxListeners(), EventEmitter.defaultMaxListeners, 'emitter did not have default max listeners');
+
+      this.indirect.setEmitter(this.emitterA);
+      assert.equal(this.emitterA.getMaxListeners(), 100, 'max listeners value was not set on emitter');
+    });
+
+    it('should restore the previous max listeners value when an emitter is detached', function() {
+      this.emitterA.setMaxListeners(100);
+      this.indirect.setEmitter(this.emitterA);
+      this.indirect.setEmitter(this.emitterB);
+      assert.equal(this.emitterA.getMaxListeners(), 100, 'max listeners value was not restored');
+    });
   });
 
+  describe('#setMaxListeners()', function() {
+    it('should set the max listeners value on the underlying emitter if one is attached', function() {
+      this.indirect.setEmitter(this.emitterA);
+      this.indirect.setMaxListeners(100);
+      assert.equal(this.emitterA.getMaxListeners(), 100, 'max listeners value was not set');
+    });
+
+    it('should return the IndirectEmitter', function() {
+      assert.equal(this.indirect.setMaxListeners(100), this.indirect, 'function did not return reference to instance');
+    });
+  });
 });
