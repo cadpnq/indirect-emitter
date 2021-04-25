@@ -204,6 +204,18 @@ describe('IndirectEmitter', function() {
   });
 
   describe('#removeAllListeners()', function() {
+    it('should remove all listeners for an event', function() {
+      const listenerA = () => 0;
+      const listenerB = () => 0;
+
+      this.indirect.on('test', listenerA);
+      this.indirect.once('test', listenerB);
+      assert.deepEqual(this.indirect.listeners('test'), [listenerA, listenerB], 'listeners were not added');
+
+      this.indirect.removeAllListeners('test');
+      assert.deepEqual(this.indirect.listeners('test'), [], 'listeners were not removed');
+    });
+
     it('should return the IndirectEmitter', function() {
       assert.equal(this.indirect.removeAllListeners('test'), this.indirect, 'function did not return reference to instance')
     });
