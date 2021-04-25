@@ -191,7 +191,7 @@ class IndirectEmitter extends ProxyExtender {
     return this;
   }
 
-  removeAllListeners(evenName) {
+  removeAllListeners(eventName) {
     const remove = [];
     for (const info of this.#listeners) {
       if (info.eventName == eventName) {
