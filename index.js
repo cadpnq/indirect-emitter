@@ -19,14 +19,20 @@ class IndirectEmitter extends ProxyExtender {
         if (obj.hasOwnProperty(prop) || typeof obj[prop] == 'function') {
           return obj[prop];
         } else {
-          return this.#emitter[prop];
+          if (this.#emitter) {
+            return this.#emitter[prop];
+          } else {
+            return undefined;
+          }
         }
       },
       set: (obj, prop, value) => {
         if (obj.hasOwnProperty(prop)) {
           obj[prop] = value;
         } else {
-          this.#emitter[prop] = value;
+          if (this.#emitter) {
+            this.#emitter[prop] = value;
+          }
         }
         return true;
       }
