@@ -1,15 +1,46 @@
 const EventEmitter = require('events');
 const IndirectEmitter = require('../index.js');
 
+class ExtendedEmitter extends EventEmitter {
+  testProperty = 42;
+
+  testMethod() {
+    return 'test';
+  }
+}
+
 function setup(context) {
   context.indirect = new IndirectEmitter();
   context.emitterA = new EventEmitter();
   context.emitterB = new EventEmitter();
+  context.extended = new ExtendedEmitter();
 }
 
 describe('IndirectEmitter', function() {
   beforeEach(function() {
     setup(this);
+  });
+
+  describe('proxied getter/setters', function() {
+    it('should return undefined when accessing an unknown property when no emitter is attached', function() {
+      assert.isUndefined(this.indirect.testProperty, 'property was not undefined');
+    });
+
+    it('should return the property value from the underlying emitter when one is attached', function() {
+      this.indirect.setEmitter(this.extended);
+      assert.isUndefined(this.indirect.unknownProperty, 'property was not undefined');
+      assert.equal(this.indirect.testProperty, 42, 'property was not the correct value');
+    });
+
+    it('should do nothing on assignment when no emitter is attached', function() {
+      this.indirect.testProperty = 10;
+    });
+
+    it('should set the value on the underlying emitter when one is attached', function() {
+      this.indirect.setEmitter(this.extended);
+      this.indirect.testProperty = 100;
+      assert.equal(this.indirect.testProperty, 100, 'property was not the same value');
+    });
   });
 
   describe('#addListener()', function() {
