@@ -57,6 +57,17 @@ describe('IndirectEmitter', function() {
     });
   });
 
+  describe('#hasEmitter()', function() {
+    it('should return false when no emitter is attached', function() {
+      assert.isFalse(this.indirect.hasEmitter(), 'did not return false');
+    });
+
+    it('should return true when an emitter is attached', function() {
+      this.indirect.setEmitter(this.emitterA);
+      assert.isTrue(this.indirect.hasEmitter(), 'did not return true');
+    });
+  });
+
   describe('#listenerCount()', function() {
     it('should return the number of listeners registered for an event', function() {
       assert.equal(this.indirect.listenerCount('test'), 0, 'number of listeners was incorrect');

@@ -131,6 +131,10 @@ class IndirectEmitter extends ProxyExtender {
     return this.#maxListeners;
   }
 
+  hasEmitter() {
+    return this.#emitter !== undefined;
+  }
+
   listenerCount(eventName) {
     let count = 0;
     for (const info of this.#listeners) {
